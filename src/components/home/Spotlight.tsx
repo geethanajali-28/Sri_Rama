@@ -1,323 +1,272 @@
-import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const items = [
+const ITEMS = [
   {
     title: "Sports",
-    tag: "Athletics",
-    description:
-      "Extensive sports facilities cater to a variety of athletic interests, promoting a well-rounded and healthy lifestyle for every student.",
+    sub: "Athletics",
     image:
-      "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=800",
-    link: "#",
-    accent: "#0f766e",
+      "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=700",
   },
   {
     title: "Infrastructure",
-    tag: "Campus",
-    description:
-      "Modern infrastructure equipped with the latest technology, fostering an environment conducive to world-class academic achievement.",
+    sub: "Campus",
     image:
-      "https://images.unsplash.com/photo-1562774053-701939374585?w=800",
-    link: "#",
-    accent: "#1e40af",
+      "https://images.unsplash.com/photo-1562774053-701939374585?w=700",
   },
   {
     title: "Cafeteria",
-    tag: "Dining",
-    description:
-      "A vibrant dining space offering nutritious, freshly prepared meals from diverse cuisines — fueling minds and bodies every day.",
+    sub: "Dining",
     image:
-      "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=800",
-    link: "#",
-    accent: "#b45309",
+      "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=700",
   },
   {
     title: "Lab & Research",
-    tag: "Innovation",
-    description:
-      "State-of-the-art laboratories empowering students to experiment, innovate, and push the boundaries of science and technology.",
+    sub: "Innovation",
     image:
-      "https://images.unsplash.com/photo-1532094349884-543559c08671?w=800",
-    link: "#",
-    accent: "#6d28d9",
+      "https://images.unsplash.com/photo-1532094349884-543559c08671?w=700",
+  },
+  {
+    title: "Library",
+    sub: "Knowledge Hub",
+    image:
+      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=700",
   },
 ];
 
-const CARDS_PER_PAGE = 2;
+export default function UltraCarousel() {
+  const [index, setIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
-const Spotlight: React.FC = () => {
-  const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(items.length / CARDS_PER_PAGE);
+  // 🔁 Infinite auto slide
+  useEffect(() => {
+    const id = setInterval(() => next(), 3500);
+    return () => clearInterval(id);
+  }, [index]);
 
-  const prev = () => setPage((p) => (p - 1 + totalPages) % totalPages);
-  const next = () => setPage((p) => (p + 1) % totalPages);
+  const next = () => setIndex((prev) => (prev + 1) % ITEMS.length);
+  const prev = () =>
+    setIndex((prev) => (prev - 1 + ITEMS.length) % ITEMS.length);
 
-  const visible = items.slice(
-    page * CARDS_PER_PAGE,
-    page * CARDS_PER_PAGE + CARDS_PER_PAGE
-  );
+  // 📱 Swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartX.current) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+    touchStartX.current = null;
+  };
 
   return (
-    <section
-      style={{
-        background: "linear-gradient(160deg, #f5f0e8 0%, #e8ddd0 100%)",
-        padding: "40px 0",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px" }}>
+    <section className="ultra-section">
+      {/* 🔥 Glow Background */}
+      <div className="glow glow1" />
+      <div className="glow glow2" />
 
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <h2
-            style={{
-              fontSize: 36,
-              fontWeight: 700,
-              color: "#1a1a1a",
-              letterSpacing: "0.06em",
-              margin: 0,
-              textTransform: "uppercase",
-            }}
-          >
-            Spotlight
-          </h2>
-          <div
-            style={{
-              width: 48,
-              height: 3,
-              background: "#0f766e",
-              borderRadius: 2,
-              margin: "14px auto 0",
-            }}
-          />
-        </div>
+      {/* Header */}
+      <div className="ultra-header">
+        <h2>Spotlight</h2>
+        <p>Explore campus excellence in a premium experience</p>
+      </div>
 
-        {/* Cards + Nav */}
-        <div style={{ position: "relative" }}>
+      {/* Carousel */}
+      <div
+        className="ultra-carousel"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {ITEMS.map((item, i) => {
+          const offset = (i - index + ITEMS.length) % ITEMS.length;
 
-          {/* Left Arrow */}
-          <button
-            onClick={prev}
-            style={{
-              position: "absolute",
-              left: -20,
-              top: "40%",
-              transform: "translateY(-50%)",
-              zIndex: 10,
-              background: "#0f766e",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              width: 38,
-              height: 38,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              transition: "background 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.background = "#0d5e56")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.background = "#0f766e")
-            }
-          >
-            <ChevronLeft size={20} />
-          </button>
+          let position = offset;
+          if (offset > ITEMS.length / 2) position -= ITEMS.length;
 
-          {/* Right Arrow */}
-          <button
-            onClick={next}
-            style={{
-              position: "absolute",
-              right: -20,
-              top: "40%",
-              transform: "translateY(-50%)",
-              zIndex: 10,
-              background: "#0f766e",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              width: 38,
-              height: 38,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              transition: "background 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.background = "#0d5e56")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.background = "#0f766e")
-            }
-          >
-            <ChevronRight size={20} />
-          </button>
+          return (
+            <div
+              key={i}
+              className="ultra-card"
+              style={{
+                transform: `
+                  translateX(${position * 120}%)
+                  scale(${position === 0 ? 1.2 : 0.8})
+                  rotateY(${position * -25}deg)
+                `,
+                zIndex: position === 0 ? 10 : 5,
+                opacity: Math.abs(position) > 2 ? 0 : 1,
+              }}
+            >
+              <div className="card-inner">
+                <img src={item.image} alt={item.title} />
 
-          {/* Card Grid */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 28,
-            }}
-          >
-            {visible.map((item, i) => (
-              <div
-                key={item.title + i}
-                style={{
-                  background: "#fff",
-                  borderRadius: 16,
-                  overflow: "hidden",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                  transition: "transform 0.3s, box-shadow 0.3s",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.transform =
-                    "translateY(-6px)";
-                  (e.currentTarget as HTMLDivElement).style.boxShadow =
-                    "0 12px 32px rgba(0,0,0,0.14)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.transform =
-                    "translateY(0)";
-                  (e.currentTarget as HTMLDivElement).style.boxShadow =
-                    "0 4px 20px rgba(0,0,0,0.08)";
-                }}
-              >
-                {/* Image */}
-                <div
-                  style={{
-                    position: "relative",
-                    overflow: "hidden",
-                    height: 240,
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
-                      transition: "transform 0.5s ease",
-                    }}
-                    onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLImageElement).style.transform =
-                        "scale(1.07)")
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLImageElement).style.transform =
-                        "scale(1)")
-                    }
-                  />
+                <div className="overlay" />
 
-                  {/* Tag Badge */}
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 14,
-                      left: 14,
-                      background: item.accent,
-                      color: "#fff",
-                      fontSize: 11,
-                      fontWeight: 600,
-                      letterSpacing: "0.08em",
-                      padding: "4px 12px",
-                      borderRadius: 20,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {item.tag}
-                  </span>
-                </div>
-
-                {/* Accent Bar */}
-                <div
-                  style={{ height: 4, background: item.accent, width: "100%" }}
-                />
-
-                {/* Content */}
-                <div style={{ padding: "24px 28px 28px" }}>
-                  <h3
-                    style={{
-                      fontSize: 22,
-                      fontWeight: 700,
-                      color: "#111",
-                      margin: "0 0 10px",
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-<a
-                    href={item.link}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 8,
-                      background: item.accent,
-                      color: "#fff",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      letterSpacing: "0.06em",
-                      padding: "10px 22px",
-                      borderRadius: 50,
-                      textDecoration: "none",
-                      textTransform: "uppercase",
-                      transition: "opacity 0.2s",
-                    }}
-                    onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.opacity = "0.85")
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.opacity = "1")
-                    }
-                  >
-                    Read More <ArrowRight size={14} />
-                  </a>
+                <div className="content">
+                  <p>{item.sub}</p>
+                  <h3>{item.title}</h3>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Dots */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 8,
-            marginTop: 36,
-          }}
-        >
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i)}
-              style={{
-                width: i === page ? 28 : 10,
-                height: 10,
-                borderRadius: 5,
-                background: i === page ? "#0f766e" : "#b0a898",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-                transition: "width 0.3s, background 0.3s",
-              }}
-            />
-          ))}
-        </div>
+            </div>
+          );
+        })}
       </div>
+
+      {/* Arrows */}
+      <div className="ultra-nav">
+        <button onClick={prev}>
+          <ChevronLeft />
+        </button>
+        <button onClick={next}>
+          <ChevronRight />
+        </button>
+      </div>
+
+      {/* 🔥 STYLES */}
+      <style>{`
+        .ultra-section {
+          position: relative;
+          padding: 4rem 1rem;
+          background: #0f0a08;
+          overflow: hidden;
+          text-align: center;
+        }
+
+        /* Glow */
+        .glow {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(120px);
+          opacity: 0.3;
+        }
+        .glow1 {
+          width: 400px;
+          height: 400px;
+          background: #ea580c;
+          top: -100px;
+          left: -100px;
+        }
+        .glow2 {
+          width: 300px;
+          height: 300px;
+          background: #fbbf24;
+          bottom: -80px;
+          right: 10%;
+        }
+
+        /* Header */
+        .ultra-header h2 {
+          font-size: 2.5rem;
+          font-weight: 800;
+          background: linear-gradient(90deg, #fb923c, #fde68a);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .ultra-header p {
+          color: rgba(255,255,255,0.5);
+          margin-top: 8px;
+        }
+
+        /* Carousel */
+        .ultra-carousel {
+          position: relative;
+          height: 320px;
+          margin-top: 3rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          perspective: 1200px;
+        }
+
+        .ultra-card {
+          position: absolute;
+          width: 220px;
+          height: 220px;
+          transition: transform 0.6s cubic-bezier(0.22,1,0.36,1),
+                      opacity 0.5s;
+        }
+
+        .card-inner {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          overflow: hidden;
+          position: relative;
+          box-shadow: 0 20px 60px rgba(234,88,12,0.4);
+        }
+
+        .card-inner img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .overlay {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8));
+        }
+
+        .content {
+          position: absolute;
+          bottom: 20px;
+          width: 100%;
+          text-align: center;
+          color: white;
+        }
+
+        .content p {
+          font-size: 10px;
+          color: #fb923c;
+          letter-spacing: 2px;
+        }
+
+        .content h3 {
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        /* Nav */
+        .ultra-nav {
+          margin-top: 2rem;
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+        }
+
+        .ultra-nav button {
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(251,146,60,0.3);
+          color: #fb923c;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.3s;
+        }
+
+        .ultra-nav button:hover {
+          background: #ea580c;
+          color: white;
+          transform: scale(1.1);
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+          .ultra-carousel {
+            height: 260px;
+          }
+
+          .ultra-card {
+            width: 180px;
+            height: 180px;
+          }
+        }
+      `}</style>
     </section>
   );
-};
-
-export default Spotlight;
+}

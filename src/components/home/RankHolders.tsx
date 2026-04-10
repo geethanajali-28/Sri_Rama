@@ -1,260 +1,137 @@
-import React, { useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Trophy, Medal, Award, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useRef } from "react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 const rankHolders = [
   {
-    name: 'Ms. Ashwini',
-    rank: '2nd Rank',
-    course: 'MBA',
-    image: 'https://randomuser.me/api/portraits/women/1.jpg',
-    badge: { icon: Medal, color: 'bg-gray-400', label: 'Silver' },
+    name: "Ms. Ashwini",
+    rank: "2nd Rank",
+    course: "MBA",
+    image: "https://randomuser.me/api/portraits/women/1.jpg",
   },
   {
-    name: 'Ms. Prathima S',
-    rank: '10th Rank',
-    course: 'MBA',
-    image: 'https://randomuser.me/api/portraits/women/2.jpg',
-    badge: { icon: Star, color: 'bg-blue-500', label: 'Star' },
+    name: "Ms. Prathima S",
+    rank: "10th Rank",
+    course: "MBA",
+    image: "https://randomuser.me/api/portraits/women/2.jpg",
   },
   {
-    name: 'Ms. Meghala',
-    rank: '6th Rank',
-    course: 'MCA',
-    image: 'https://randomuser.me/api/portraits/women/3.jpg',
-    badge: { icon: Star, color: 'bg-blue-500', label: 'Star' },
+    name: "Ms. Meghala",
+    rank: "6th Rank",
+    course: "MCA",
+    image: "https://randomuser.me/api/portraits/women/3.jpg",
   },
   {
-    name: 'Mr. Sohan Shetty',
-    rank: '9th Rank',
-    course: 'M.Tech Construction',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-    badge: { icon: Star, color: 'bg-blue-500', label: 'Star' },
-  },
-  {
-    name: 'Ms. Sandhya T.J',
-    rank: '3rd Rank',
-    course: 'MBA',
-    image: 'https://randomuser.me/api/portraits/women/4.jpg',
-    badge: { icon: Award, color: 'bg-amber-500', label: 'Bronze' },
-  },
-  {
-    name: 'Ms. Anusha',
-    rank: '3rd Rank',
-    course: 'MCA',
-    image: 'https://randomuser.me/api/portraits/women/5.jpg',
-    badge: { icon: Award, color: 'bg-amber-500', label: 'Bronze' },
-  },
-  {
-    name: 'Mr. Rahul Kumar',
-    rank: '1st Rank',
-    course: 'B.E Civil',
-    image: 'https://randomuser.me/api/portraits/men/2.jpg',
-    badge: { icon: Trophy, color: 'bg-yellow-500', label: 'Gold' },
-  },
-  {
-    name: 'Ms. Divya R',
-    rank: '4th Rank',
-    course: 'MCA',
-    image: 'https://randomuser.me/api/portraits/women/6.jpg',
-    badge: { icon: Star, color: 'bg-blue-500', label: 'Star' },
-  },
-  {
-    name: 'Mr. Kiran B',
-    rank: '5th Rank',
-    course: 'M.Tech CS',
-    image: 'https://randomuser.me/api/portraits/men/3.jpg',
-    badge: { icon: Star, color: 'bg-blue-500', label: 'Star' },
-  },
-  {
-    name: 'Ms. Rekha N',
-    rank: '1st Rank',
-    course: 'MCA',
-    image: 'https://randomuser.me/api/portraits/women/7.jpg',
-    badge: { icon: Trophy, color: 'bg-yellow-500', label: 'Gold' },
+    name: "Mr. Sohan Shetty",
+    rank: "9th Rank",
+    course: "M.Tech",
+    image: "https://randomuser.me/api/portraits/men/1.jpg",
   },
 ];
 
-const VISIBLE_DESKTOP = 5;
-const VISIBLE_MOBILE = 2;
+export default function RankHoldersSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-const RankHoldersPage: React.FC = () => {
-  const [startIndex, setStartIndex] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-
-  const getVisible = () => {
-    const isMobile = window.innerWidth < 640;
-    return isMobile ? VISIBLE_MOBILE : VISIBLE_DESKTOP;
-  };
-
-  const [visibleCount, setVisibleCount] = useState(VISIBLE_DESKTOP);
-
-  React.useEffect(() => {
-    const update = () =>
-      setVisibleCount(window.innerWidth < 640 ? VISIBLE_MOBILE : window.innerWidth < 1024 ? 3 : VISIBLE_DESKTOP);
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-
-  const prev = () =>
-    setStartIndex((i) => (i - 1 + rankHolders.length) % rankHolders.length);
-  const next = () =>
-    setStartIndex((i) => (i + 1) % rankHolders.length);
-
-  const visible = Array.from({ length: visibleCount }, (_, i) =>
-    rankHolders[(startIndex + i) % rankHolders.length]
-  );
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
-    touchStartX.current = null;
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const width = scrollRef.current.clientWidth;
+    scrollRef.current.scrollBy({
+      left: dir === "left" ? -width : width,
+      behavior: "smooth",
+    });
   };
 
   return (
-<div className="bg-gradient-to-b from-[#0d1b4b] via-[#1a3070] to-[#0d1b4b]">
-      {/* Hero banner */}
-<div className="relative overflow-hidden pt-8 pb-4 px-4 text-center">
-        <div className="absolute inset-0 opacity-10">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full border border-white/30"
-              style={{
-                width: `${120 + i * 80}px`,
-                height: `${120 + i * 80}px`,
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-              }}
-            />
-          ))}
-        </div>
+    <section className="relative py-16 px-4 sm:px-10 bg-[#0b0706] overflow-hidden">
 
-        <div className="relative z-10">
-          
+      {/* Glow BG */}
+      <div className="absolute w-[350px] h-[350px] bg-orange-500/20 blur-[120px] top-[-100px] left-[-80px] rounded-full" />
+      <div className="absolute w-[300px] h-[300px] bg-yellow-400/20 blur-[120px] bottom-[-80px] right-[10%] rounded-full" />
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight">
-             Rank Holders
-          </h1>
-          <p className="text-blue-200 text-sm sm:text-base max-w-xl mx-auto">
-            Celebrating the outstanding students who have brought pride to Sri Rama Institution
-          </p>
-
-         
-        </div>
+      {/* HEADER */}
+      <div className="text-center max-w-2xl mx-auto mb-14 relative z-10">
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-orange-400 via-yellow-300 to-orange-500 bg-clip-text text-transparent">
+          Rank Holders
+        </h2>
+        <p className="text-gray-400 text-sm sm:text-base">
+          Celebrating our top achievers and academic excellence.
+        </p>
       </div>
 
-      {/* Divider wave */}
-      <div className="relative h-8 overflow-hidden">
-        <svg viewBox="0 0 1440 32" className="absolute bottom-0 w-full" preserveAspectRatio="none">
-          <path d="M0,32 C360,0 1080,0 1440,32 L1440,32 L0,32 Z" fill="#f5ede0" />
-        </svg>
-      </div>
-
-      {/* Cards section */}
-      <div className="bg-[#f5ede0] py-10 px-4">
+      {/* SLIDER */}
+      <div className="relative max-w-7xl mx-auto">
 
         <div
-          className="relative max-w-6xl mx-auto"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar px-2"
         >
-          {/* Nav buttons */}
-          <button
-            onClick={prev}
-            className="absolute -left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#0d1b4b] hover:bg-[#1a3070] text-white flex items-center justify-center shadow-lg transition-colors"
-            aria-label="Previous"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
+          {rankHolders.map((student, index) => (
+            <div
+              key={index}
+              className="snap-center min-w-[250px] sm:min-w-[280px] flex-shrink-0"
+            >
+              <div className="group relative">
 
-          <div
-            className="grid gap-4 px-6 sm:px-8 transition-all duration-300"
-            style={{ gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))` }}
-          >
-            {visible.map((person, i) => {
-              const BadgeIcon = person.badge.icon;
-              return (
-                <div
-                  key={i}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
-                >
-                  
+                {/* IMAGE */}
+                <div className="overflow-hidden rounded-3xl">
+                  <img
+                    src={student.image}
+                    alt={student.name}
+                    className="w-full h-72 object-cover transition duration-700 group-hover:scale-110"
+                  />
+                </div>
 
-                  {/* Photo */}
-                  <div className="relative pt-3 px-3">
-<div className="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-100">
-                      <img
-                        src={person.image}
-                        alt={person.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                      />
-                     
-                    </div>
-                  </div>
+                {/* LIGHT OVERLAY (Reduced for clarity) */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
-                  {/* Info */}
-                  <div className="px-4 py-4 flex flex-col items-center text-center flex-1">
-                    <p className="font-bold text-[#0d1b4b] text-xs sm:text-sm leading-tight">
-                      {person.name}
-                    </p>
-                    <span className="mt-1.5 inline-block bg-[#0d1b4b] text-white text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                      {person.rank}
+                {/* SMALL GLASS CARD */}
+                <div className="absolute bottom-3 left-3 right-3 backdrop-blur-lg bg-white/10 border border-white/10 rounded-xl px-3 py-2 shadow-xl transition-all duration-300 group-hover:translate-y-[-5px]">
+
+                  <h3 className="text-white font-semibold text-sm leading-tight">
+                    {student.name}
+                  </h3>
+
+                  <p className="text-orange-400 font-semibold text-xs">
+                    {student.rank}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-gray-300 text-xs">
+                      {student.course}
                     </span>
-                    <p className="mt-1.5 text-gray-500 text-[10px] sm:text-xs leading-tight">
-                      {person.course}
-                    </p>
+
+                    <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 text-white shadow-md hover:scale-110 transition">
+                      <ArrowRight size={14} />
+                    </button>
                   </div>
                 </div>
-              );
-            })}
-          </div>
 
-          <button
-            onClick={next}
-            className="absolute -right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#0d1b4b] hover:bg-[#1a3070] text-white flex items-center justify-center shadow-lg transition-colors"
-            aria-label="Next"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
+                {/* HOVER SHINE EFFECT */}
+                <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
 
-        {/* Dot indicators */}
-        <div className="flex justify-center gap-2 mt-6">
-          {rankHolders.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setStartIndex(i)}
-              className={`rounded-full transition-all duration-300 ${
-                i === startIndex
-                  ? 'bg-[#0d1b4b] w-5 h-2'
-                  : 'bg-[#0d1b4b]/25 hover:bg-[#0d1b4b]/50 w-2 h-2'
-              }`}
-              aria-label={`Go to ${i + 1}`}
-            />
+                {/* BORDER GLOW */}
+                <div className="absolute inset-0 rounded-3xl border border-orange-400/20 group-hover:border-orange-400/60 transition" />
+
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* Swipe hint — mobile only */}
-        <p className="text-center text-gray-400 text-xs mt-3 sm:hidden">
-          Swipe left or right to browse
-        </p>
+        {/* ARROWS */}
+        <button
+          onClick={() => scroll("left")}
+          className="hidden sm:flex absolute left-[-10px] top-1/2 -translate-y-1/2 z-10 bg-white/10 backdrop-blur-md border border-orange-400/30 p-3 rounded-full text-orange-400 hover:bg-orange-500 hover:text-white transition"
+        >
+          <ChevronLeft size={18} />
+        </button>
 
-        {/* Read More */}
-        <div className="flex justify-center mt-8">
-          <Button className="bg-[#0d1b4b] hover:bg-[#1a3070] text-white font-bold tracking-widest uppercase px-10 py-3 rounded-full text-sm shadow-lg">
-            View All Rank Holders
-          </Button>
-        </div>
+        <button
+          onClick={() => scroll("right")}
+          className="hidden sm:flex absolute right-[-10px] top-1/2 -translate-y-1/2 z-10 bg-white/10 backdrop-blur-md border border-orange-400/30 p-3 rounded-full text-orange-400 hover:bg-orange-500 hover:text-white transition"
+        >
+          <ChevronRight size={18} />
+        </button>
+
       </div>
-    </div>
+    </section>
   );
-};
-
-export default RankHoldersPage;
+}

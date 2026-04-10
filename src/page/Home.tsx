@@ -19,7 +19,7 @@ const Home: React.FC = () => {
       <Spotlight />
       <Testimonials />
       <AboutCampus />
-      <PlacementSection />
+      
       
 
     </div>

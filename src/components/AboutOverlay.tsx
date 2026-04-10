@@ -1,10 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   onClose?: () => void;
 }
 
 const AboutOverlay: React.FC<Props> = ({ onClose }) => {
+  const navigate = useNavigate();
 
   const itemsLeft = [
     "About the Institution",
@@ -26,6 +28,13 @@ const AboutOverlay: React.FC<Props> = ({ onClose }) => {
     "Committees",
   ];
 
+  const handleItemClick = (item: string) => {
+    if (item === "Location") {
+      navigate("/about/location");
+      onClose?.();
+    }
+  };
+
   const renderItem = (item: string) => (
     <div
       key={item}
@@ -33,6 +42,7 @@ const AboutOverlay: React.FC<Props> = ({ onClose }) => {
     >
       <button
         type="button"
+        onClick={() => handleItemClick(item)}
         className="w-full flex items-center gap-3 py-4 text-[14px] text-gray-700 hover:text-gray-900 transition-colors"
       >
         <span className="text-gray-500 text-xs leading-none">▶</span>

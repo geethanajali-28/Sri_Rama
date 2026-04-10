@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -20,6 +19,17 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick }) => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const aboutDropdownTo: Record<string, string> = {
+    "About Us": "/about-us",
+    Feedback: "/feedback",
+    Affiliations: "/about/affiliations",
+    "Governing Body": "/about/governing-body",
+    "Principal Message": "/about/principal-message",
+    Location: "/about/location",
+    Scholarship: "/about/scholarship",
+  };
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -28,11 +38,10 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick }) => {
       name: 'About',
       path: '/about',
       dropdown: [
-        'Overview',
-        'Affiliations',
+        'About Us',
+        'Feedback',
         'Governing Body',
         'Principal Message',
-        'Faculty',
         'Location',
         'Scholarship',
       ],
@@ -67,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick }) => {
       path: '/placements',
       dropdown: [
         'Placement Cell',
-        'Recruiters',
+        'Recruiters Section',
         'Training Programs',
         'Placement Stats',
       ],
@@ -110,7 +119,14 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick }) => {
                     "flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-md bg-transparent text-white hover:text-yellow-300 cursor-pointer",
                     isActive(item.path) && "text-yellow-300"
                   )}
-                  onClick={() => item.name === "About" && onAboutClick()}
+                  onClick={() => {
+                    setActiveDropdown(null);
+                    if (item.name === 'About') {
+                      onAboutClick();
+                      return;
+                    }
+                    navigate(item.path);
+                  }}
                 >
                   {item.name}
                   {item.dropdown && <ChevronDown className="h-4 w-4" />}
@@ -123,7 +139,12 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick }) => {
                     {item.dropdown.map((sub, index) => (
                       <Link
                         key={index}
-                        to={item.path}
+                        to={
+                          item.name === 'About'
+                            ? (aboutDropdownTo[sub] ?? item.path)
+                            : `${item.path}/${sub.toLowerCase().replace(/\s+/g, '-')}`
+                        }
+                        onClick={() => setActiveDropdown(null)}
                         className="block px-4 py-3 text-sm text-gray-700 hover:bg-yellow-400 hover:text-black transition-colors"
                       >
                         {sub}

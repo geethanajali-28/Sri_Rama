@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import logo from "@/assets/logo1.jpeg"; 
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -12,21 +13,23 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
       {/* TOP NAVBAR */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between">
+    <div className="w-full max-w-7xl mx-auto pl-0 pr-4 sm:pl-1 sm:pr-6">
+        <div className="flex h-20 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-r from-primary to-blue-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm sm:text-lg">SR</span>
-            </div>
-
+          <Link to="/" className="flex items-center gap-2 -ml-2">
+          <div className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full bg-white p-[1px] flex items-center justify-center">
+  <img
+    src={logo}
+    alt="Logo"
+    className="h-full w-full object-cover rounded-full scale-105"
+  />
+</div>
             <div className="block">
               <span className="font-semibold text-sm sm:text-lg leading-tight">
-                Sri Rama
+                Sri Rama First Grade College
               </span>
               <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight">
-                Degree College
-              </p>
+Hanuman Nagara,Kalladka             </p>
             </div>
           </Link>
 
