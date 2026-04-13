@@ -1,3 +1,4 @@
+
 import { CampusCard } from "./Campus";
 
 const Hostel = () => (
