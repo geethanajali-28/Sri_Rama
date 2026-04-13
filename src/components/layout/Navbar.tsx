@@ -46,11 +46,10 @@ const Navbar: React.FC<NavbarProps> = ({ onAboutClick }) => {
       name: 'Admissions',
       path: '/admissions',
       dropdown: [
-        'Admission Process',
+     
         'Eligibility',
         'Application Form',
-        'Documents Required',
-        'Fee Details',
+        
       ],
     },
 
@@ -138,7 +137,11 @@ const to = isCampusItem
     : `/about#${sub.toLowerCase().replace(/\s+/g, '-')}`
   : sub === 'Location'
   ? '/about/location'
-  : item.path;                   // all others unchanged
+ : sub === 'Eligibility'
+? '/admissions/eligibility'
+: sub === 'Application Form'
+? '/admissions/application-form'
+: item.path;                  // all others unchanged
 
   return (
 <Link
