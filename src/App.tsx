@@ -5,7 +5,7 @@ import AboutPage from './page/About';
 import Campus from './components/Campus/Campus';
 import Admission from './page/Admission';
 import Eligibility from './components/admission/Eligibility';
-import ApplicationForm from "./components/admission/Admissionform"
+import ApplicationForm from "./components/admission/Admissionform";
 
 function App() {
   return (
